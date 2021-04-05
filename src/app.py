@@ -1,5 +1,5 @@
-from flask import Flask
-from flask import (Blueprint, current_app, flash, jsonify, redirect, request,url_for)
+from flask import (Flask, jsonify, redirect, request,json)
+#from flask import (Blueprint, current_app, flash, jsonify, redirect, request,url_for)
 app = Flask(__name__)
 
 todos = [
@@ -9,15 +9,29 @@ todos = [
 
 @app.route('/todos', methods=['GET'])
 def hello_world():
-
     # puedes convertir esa variable en un string json así
     json_text =jsonify(todos)
 
     return json_text
 
+@app.route('/todos', methods=['POST'])
+def add_new_todo():
+    request_body = request.data
+    decoded_object = json.loads(request_body)
+    todos.append(decoded_object)
+    #print("Incoming request with the following body", request_body)
+    json_text =jsonify(todos)
+
+    return json_text
 
 
+@app.route('/todos/<int:position>', methods=['DELETE'])
+def delete_todo(position):
+    todos.pop(position)
+    #print("This is the position to delete: ",position)
+    json_text =jsonify(todos)
 
+    return json_text
 
 
 # These two lines should always be at the end of your app.py file.
